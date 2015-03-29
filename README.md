@@ -56,7 +56,7 @@ Then you need to create physics bodies and make them move
 
 ## .createBodyFromMesh()
 
-It will create the ```IOMO.Body``` from a three.js mesh you give it. 
+It will create the ```OIMO.Body``` from a three.js mesh you give it. 
 Currently it support ```THREE.CubeGeometry``` and ```THREE.SphereGeometry```. First create a normal ```THREE.Mesh```
 
 ```
@@ -66,27 +66,33 @@ var mesh	= new THREE.Mesh( geometry, material )
 scene.add(mesh)
 ```
 
-Then you create the ```IOMO.Body``` for it
+Then you create the ```OIMO.Body``` for it
 
 ```	
-var body	= THREEx.Iomo.createBodyFromMesh(world, mesh)
+var body	= THREEx.Oimo.createBodyFromMesh(world, mesh)
 ```
 
-## .Body2MeshUpdater()
-
-It will update the position/rotation of a ```THREE.Mesh``` 
-based on a position/rotation of a ```IOMO.Body```. You need
-this to see your meshes moves according to oimo.js physics.
-First you create the object
-
-```
-var updater	= new THREEx.Iomo.Body2MeshUpdater(body, mesh)
+## .updateObject3dWithBody()
+First define an array over which we can iterate in the animation sequence
+```	
+var onRenderFcts= [];
 ```
 
-Then, at every frame, update your mesh position/rotation.
+
+Add the physical body you have just created to the mesh object and push it onto the objects-to-apply-physics-to array:
+```	
+onRenderFcts.push(function(delta){
+  THREEx.Oimo.updateObject3dWithBody(mesh, body)
+})
+```
+
+
+Then, in your animation sequence, at every frame, update your mesh position/rotation.
 
 ```
-updater.update()
+		onRenderFcts.forEach(function(onRenderFct){
+			onRenderFct(deltaMsec/1000, nowMsec/1000)
+		})
 ```
 
 
